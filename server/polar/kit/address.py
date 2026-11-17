@@ -282,15 +282,15 @@ class Address(BaseModel):
             or self.postal_code is not None
         )
 
-    def get_missing_required_fields(self) -> list[str]:
-        missing: list[str] = []
-        if self.country in STATE_REQUIRED_COUNTRIES and not self.has_state():
-            missing.append("state")
-        if self.country in CITY_REQUIRED_COUNTRIES and self.city is None:
-            missing.append("city")
-        if self.country in POSTAL_CODE_REQUIRED_COUNTRIES and self.postal_code is None:
-            missing.append("postal_code")
-        return missing
+    def has_required_fields(self) -> bool:
+        return not (
+            (self.country in STATE_REQUIRED_COUNTRIES and not self.has_state())
+            or (self.country in CITY_REQUIRED_COUNTRIES and self.city is None)
+            or (
+                self.country in POSTAL_CODE_REQUIRED_COUNTRIES
+                and self.postal_code is None
+            )
+        )
 
     def to_text(self) -> str:
         lines = []
