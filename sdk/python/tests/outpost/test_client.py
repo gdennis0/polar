@@ -3606,7 +3606,7 @@ def _snapshot(customer: str, reducer: str, version: int) -> dict[str, typing.Any
 
 
 @pytest.mark.anyio
-async def test_reads_a_meter_in_five_commands_each_reducers_whole_state(
+async def test_reads_a_meter_in_one_command(
     redis_connection: tuple[str, Redis],
     polar_client: httpx2.AsyncClient,
     redis_commands: collections.Counter[str],
@@ -3619,7 +3619,7 @@ async def test_reads_a_meter_in_five_commands_each_reducers_whole_state(
             await outpost.meter(external_customer_id="alice", meter_id="meter")
 
         await read()
-        assert await _cost(redis_commands, read) == {"evalsha": 2, "hget": 3}
+        assert await _cost(redis_commands, read) == {"evalsha": 1}
 
 
 @pytest.mark.anyio
@@ -3643,7 +3643,7 @@ async def test_tracks_and_acknowledges_an_event_in_one_command_each(
 
 
 @pytest.mark.anyio
-async def test_warms_a_known_customer_over_eleven_reducers_in_23_commands(
+async def test_warms_a_known_customer_over_eleven_reducers_in_one_command(
     redis_connection: tuple[str, Redis],
     polar_client: httpx2.AsyncClient,
     redis_commands: collections.Counter[str],
@@ -3666,7 +3666,7 @@ async def test_warms_a_known_customer_over_eleven_reducers_in_23_commands(
         await outpost.actor(external_customer_id="alice")
         assert await _cost(
             redis_commands, lambda: outpost.actor(external_customer_id="alice")
-        ) == {"evalsha": 11, "hget": 12}
+        ) == {"evalsha": 1}
 
 
 @pytest.mark.anyio
@@ -3777,4 +3777,4 @@ async def test_lets_a_second_reader_of_a_cold_customer_read_it_again_and_again(
                     )
 
         cost = await _cost(redis_commands, read)
-    assert cost["hget"] <= 3 * (0.08 / 0.025 + 6)
+    assert cost["evalsha"] <= 2 * (0.08 / 0.025 + 6)
