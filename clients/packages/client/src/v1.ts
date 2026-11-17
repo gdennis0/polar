@@ -21378,7 +21378,7 @@ export interface components {
        * @description The name of the customer that should appear on the invoice.
        */
       billing_name?: string | null
-      /** @description The address of the customer that should appear on the invoice. Country and state fields cannot be updated. */
+      /** @description The address of the customer that should appear on the invoice. Country and state can only be changed on draft orders, which recalculates their tax. */
       billing_address?: components['schemas']['AddressInput'] | null
     }
     /** CustomerOrganization */
@@ -30668,7 +30668,7 @@ export interface components {
        * @description The name of the customer that should appear on the invoice.
        */
       billing_name?: string | null
-      /** @description The address of the customer that should appear on the invoice. Country and state fields cannot be updated. */
+      /** @description The address of the customer that should appear on the invoice. Country and state can only be changed on draft orders, which recalculates their tax. */
       billing_address?: components['schemas']['AddressInput'] | null
     }
     /**
